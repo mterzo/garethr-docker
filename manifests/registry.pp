@@ -16,7 +16,7 @@
 #
 # [*password*]
 #   Password for authentication to private Docker registry. Leave undef if
-#   auth is not required.
+#   auth is not required.  Password can not be blank.
 #
 # [*email*]
 #   Email for registration to private Docker registry. Leave undef if
@@ -43,6 +43,7 @@ define docker::registry(
 
   if $ensure == 'present' {
     if $username != undef and $password != undef and $email != undef {
+      validate_slength($password, 255, 1)
       $auth_cmd = "${docker_command} login -u '${username}' -p \"\${password}\" -e '${email}' ${server}"
       $auth_environment = "password=${password}"
     }

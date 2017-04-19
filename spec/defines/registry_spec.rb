@@ -52,6 +52,15 @@ describe 'docker::registry', :type => :define do
     it { should contain_exec('localhost:5000 auth').with_command("docker login -u 'user1' -p \"${password}\" -e 'user1@example.io' localhost:5000").with_user('testuser').with_environment('password=secret') }
   end
 
+  context 'with username => user1, and password => empty, and email => user1@example.io and local_user => testuser' do
+    let(:params) { { 'username' => 'user1', 'password' => '', 'email' => 'user1@example.io', 'local_user' => 'testuser' } }
+    it do
+        expect {
+            should have_exec_resource_count(0)
+        }.to raise_error(Puppet::Error)
+    end
+  end
+
   context 'with an invalid ensure value' do
     let(:params) { { 'ensure' => 'not present or absent' } }
     it do
